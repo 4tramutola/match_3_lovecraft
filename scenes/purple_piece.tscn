@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b04l6hmtbbuji"]
+
+[ext_resource type="PackedScene" uid="uid://cp4yoirfq1mnr" path="res://scenes/Piece.tscn" id="1_lebsf"]
+[ext_resource type="Texture2D" uid="uid://cpj7d0qsbdmon" path="res://Pieces/Star_Basic.png" id="2_vgkeg"]
+
+[node name="purple_piece" instance=ExtResource("1_lebsf")]
+color = "purple"
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("2_vgkeg")

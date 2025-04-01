@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3 uid="uid://dlhxjp7t8k0cs"]
+
+[ext_resource type="Texture2D" uid="uid://dficykcwhhist" path="res://art/background 2.png" id="1_5snyb"]
+[ext_resource type="Texture2D" uid="uid://ccifo13kdg1nj" path="res://art/Top UI v 2.png" id="2_xqmpp"]
+[ext_resource type="Texture2D" uid="uid://5r4tig42n01" path="res://art/Bottom UI v 2.png" id="3_7wq2k"]
+[ext_resource type="Script" uid="uid://b4ua1gowkofww" path="res://scenes/grid.gd" id="4_xqmpp"]
+
+[node name="game_window" type="Node2D"]
+
+[node name="background" type="TextureRect" parent="."]
+offset_left = -1.0
+offset_right = 39.0
+offset_bottom = 40.0
+texture = ExtResource("1_5snyb")
+
+[node name="top_ui" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_xqmpp")
+
+[node name="bottom_ui" type="TextureRect" parent="."]
+offset_top = 928.0
+offset_right = 576.0
+offset_bottom = 1020.0
+texture = ExtResource("3_7wq2k")
+
+[node name="grid" type="Node2D" parent="."]
+script = ExtResource("4_xqmpp")
+width = 6
+height = 6
+x_start = 64
+y_start = 864
+offset = 90
+y_offset = 2
+
+[node name="destroy_timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="collapse_timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="refill_timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="timeout" from="destroy_timer" to="grid" method="_on_destroy_timer_timeout"]
+[connection signal="timeout" from="collapse_timer" to="grid" method="_on_collapse_timer_timeout"]
+[connection signal="timeout" from="refill_timer" to="grid" method="_on_refill_timer_timeout"]
