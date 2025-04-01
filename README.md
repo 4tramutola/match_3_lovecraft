@@ -1,2 +1,2 @@
 # match_3_lovecraft
- match 3 game concept
+This repository contain a concept for a match 3 game inspired by Hp Lovecraft stories.
