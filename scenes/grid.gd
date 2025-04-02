@@ -12,6 +12,9 @@ var state
 @export var offset: int;
 @export var y_offset: int;
 
+# Obstacle Stuff
+@export var empty_spaces: PackedVector2Array
+
 #Pieces array
 var possible_pieces = [
 preload("res://scenes/blue_piece.tscn"),
@@ -41,6 +44,13 @@ func _ready():
 	all_pieces = make_2d_array()
 	spawn_pieces();
 
+func restricted_moviment(place):
+	#check empty pieces
+	for i in empty_spaces.size():
+		if empty_spaces[i] == place:
+			return true
+	return false
+
 func make_2d_array():
 	var array = []
 	for i in width:
@@ -52,17 +62,18 @@ func make_2d_array():
 func spawn_pieces():
 	for i in width:
 		for j in height:
-			var rand = floor(randi_range(0, possible_pieces.size() - 1))
-			var loops = 0
-			var piece = possible_pieces[rand].instantiate()
-			while(match_at(i,j,piece.color) && loops < 100):
-				rand = floor(randi_range(0, possible_pieces.size() - 1))
-				loops += 1
-				piece = possible_pieces[rand].instantiate()
-				
-			add_child(piece)
-			piece.set_position(grid_to_pixel(i, j))
-			all_pieces[i][j] = piece
+			if !restricted_moviment(Vector2(i, j)):
+				var rand = floor(randi_range(0, possible_pieces.size() - 1))
+				var loops = 0
+				var piece = possible_pieces[rand].instantiate()
+				while(match_at(i,j,piece.color) && loops < 100):
+					rand = floor(randi_range(0, possible_pieces.size() - 1))
+					loops += 1
+					piece = possible_pieces[rand].instantiate()
+					
+				add_child(piece)
+				piece.set_position(grid_to_pixel(i, j))
+				all_pieces[i][j] = piece
 
 func match_at(i, j, color):
 	if i > 1:
@@ -188,7 +199,7 @@ func destroy_matched():
 func collapse_columns():
 	for i in width:
 		for j in height:
-			if all_pieces[i][j] == null:
+			if all_pieces[i][j] == null && !restricted_moviment(Vector2(i, j)):
 				for k in range(j + 1, height):
 					if all_pieces[i][k] != null:
 						all_pieces[i][k].move(grid_to_pixel(i, j))
@@ -200,7 +211,7 @@ func collapse_columns():
 func refill_columns():
 	for i in width:
 		for j in height:
-			if all_pieces[i][j] == null:
+			if all_pieces[i][j] == null && !restricted_moviment(Vector2(i, j)):
 				var rand = floor(randi_range(0, possible_pieces.size() - 1));
 				var loops = 0;
 				var piece = possible_pieces[rand].instantiate();

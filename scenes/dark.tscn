@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cln1ihibgxfmb"]
+
+[ext_resource type="Script" uid="uid://bgaksv64v5bn5" path="res://scripts/dark.gd" id="1_8w4s7"]
+[ext_resource type="Texture2D" uid="uid://dauejlfl2t438" path="res://Pieces/Dark_Basic.png" id="1_ey04d"]
+
+[node name="Dark" type="Node2D"]
+script = ExtResource("1_8w4s7")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_ey04d")

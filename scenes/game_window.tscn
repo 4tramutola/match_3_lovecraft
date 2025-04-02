@@ -32,6 +32,9 @@ x_start = 64
 y_start = 864
 offset = 90
 y_offset = 2
+empty_spaces = PackedVector2Array(0, 0, 0, 5, 5, 5, 5, 0, 2, 2, 2, 3, 3, 2, 3, 3)
+
+[node name="dark_holder" type="Node2D" parent="."]
 
 [node name="destroy_timer" type="Timer" parent="."]
 wait_time = 0.5
