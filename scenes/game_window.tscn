@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dlhxjp7t8k0cs"]
+[gd_scene load_steps=6 format=3 uid="uid://dlhxjp7t8k0cs"]
 
 [ext_resource type="Texture2D" uid="uid://dficykcwhhist" path="res://art/background 2.png" id="1_5snyb"]
 [ext_resource type="Texture2D" uid="uid://ccifo13kdg1nj" path="res://art/Top UI v 2.png" id="2_xqmpp"]
 [ext_resource type="Texture2D" uid="uid://5r4tig42n01" path="res://art/Bottom UI v 2.png" id="3_7wq2k"]
 [ext_resource type="Script" uid="uid://b4ua1gowkofww" path="res://scenes/grid.gd" id="4_xqmpp"]
+[ext_resource type="Script" uid="uid://dvh1ecs1j2tgf" path="res://scripts/dark_holder.gd" id="5_7wq2k"]
 
 [node name="game_window" type="Node2D"]
 
@@ -33,8 +34,10 @@ y_start = 864
 offset = 90
 y_offset = 2
 empty_spaces = PackedVector2Array(0, 0, 0, 5, 5, 5, 5, 0, 2, 2, 2, 3, 3, 2, 3, 3)
+dark_spaces = PackedVector2Array(1, 1)
 
 [node name="dark_holder" type="Node2D" parent="."]
+script = ExtResource("5_7wq2k")
 
 [node name="destroy_timer" type="Timer" parent="."]
 wait_time = 0.5
@@ -48,6 +51,8 @@ one_shot = true
 wait_time = 0.5
 one_shot = true
 
+[connection signal="damage_dark" from="grid" to="dark_holder" method="_on_grid_damage_dark"]
+[connection signal="make_dark" from="grid" to="dark_holder" method="_on_grid_make_dark"]
 [connection signal="timeout" from="destroy_timer" to="grid" method="_on_destroy_timer_timeout"]
 [connection signal="timeout" from="collapse_timer" to="grid" method="_on_collapse_timer_timeout"]
 [connection signal="timeout" from="refill_timer" to="grid" method="_on_refill_timer_timeout"]
