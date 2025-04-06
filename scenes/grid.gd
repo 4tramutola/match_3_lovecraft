@@ -15,10 +15,13 @@ var state
 # Obstacle Stuff
 @export var empty_spaces: PackedVector2Array
 @export var dark_spaces: PackedVector2Array
+@export var stone_spaces: PackedVector2Array
 
 # Obstacle signals
 signal damage_dark
 signal make_dark
+signal damage_stone
+signal make_stone
 
 #Pieces array
 var possible_pieces = [
@@ -49,10 +52,17 @@ func _ready():
 	all_pieces = make_2d_array()
 	spawn_pieces();
 	spawn_dark();
+	spawn_stone();
 	
 func restricted_fill(place):
 		#check empty pieces
 	if is_in_array(empty_spaces, place):
+		return true
+	return false
+
+func restricted_move(place):
+	#Check the stone pieces
+	if is_in_array(stone_spaces, place):
 		return true
 	return false
 
@@ -89,6 +99,9 @@ func spawn_pieces():
 func spawn_dark():
 	for i in dark_spaces.size():
 		emit_signal("make_dark", dark_spaces[i])
+func spawn_stone():
+	for i in stone_spaces.size():
+		emit_signal("make_stone",stone_spaces[i])
 
 func match_at(i, j, color):
 	if i > 1:
@@ -131,14 +144,15 @@ func swap_pieces(column, row, direction):
 	var first_piece = all_pieces[column][row];
 	var other_piece = all_pieces[column + direction.x][row + direction.y];
 	if first_piece != null && other_piece != null:
-		store_info(first_piece, other_piece, Vector2(column, row), direction);
-		state = wait
-		all_pieces[column][row] = other_piece;
-		all_pieces[column + direction.x][row + direction.y] = first_piece;
-		first_piece.move(grid_to_pixel(column + direction.x, row + direction.y));
-		other_piece.move(grid_to_pixel(column, row));
-		if !move_checked:
-			find_matches()
+		if !restricted_move(Vector2(column, row)) and !restricted_move(Vector2(column, row) + direction):
+			store_info(first_piece, other_piece, Vector2(column, row), direction);
+			state = wait
+			all_pieces[column][row] = other_piece;
+			all_pieces[column + direction.x][row + direction.y] = first_piece;
+			first_piece.move(grid_to_pixel(column + direction.x, row + direction.y));
+			other_piece.move(grid_to_pixel(column, row));
+			if !move_checked:
+				find_matches()
 
 func store_info(first_piece, other_piece, place, direction):
 	piece_one = first_piece;
@@ -206,7 +220,7 @@ func destroy_matched():
 		for j in height:
 			if all_pieces[i][j] != null:
 				if all_pieces[i][j].matched:
-					emit_signal("damage_dark", Vector2(i, j))
+					damage_special(i, j)
 					was_matched = true
 					all_pieces[i][j].queue_free();
 					all_pieces[i][j] != null
@@ -215,6 +229,10 @@ func destroy_matched():
 		get_parent().get_node("collapse_timer").start()
 	else:
 		swap_back()
+		
+func damage_special(column, row):
+	emit_signal("damage_dark", Vector2(column, row))
+	emit_signal("damage_stone", Vector2(column, row))
 
 func collapse_columns():
 	for i in width:
@@ -267,3 +285,9 @@ func _on_collapse_timer_timeout():
 
 func _on_refill_timer_timeout():
 	refill_columns()
+
+func _on_stone_holder_remove_stone(place):
+	for i in range(stone_spaces.size() - 1, -1, -1):
+		if stone_spaces[i] == place:
+			stone_spaces.remove_at(i)
+	pass # Replace with function body.
