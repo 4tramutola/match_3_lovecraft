@@ -2,7 +2,7 @@ extends Node2D
 
 var dark_pieces = []
 var width = 6
-var height = 6
+var height = 8
 var dark = preload("res://scenes/dark.tscn")
 
 # Called when the node enters the scene tree for the first time.
@@ -22,7 +22,7 @@ func _on_grid_make_dark(board_position):
 		dark_pieces = make_2d_array()
 	var current = dark.instantiate()
 	add_child(current)
-	current.position = Vector2(board_position.x * 90 + 64, -board_position.y * 64 + 864)
+	current.position = Vector2(board_position.x * 64 + 90, -board_position.y * 90 + 864)
 	dark_pieces[board_position.x][board_position.y] = current
 
 func _on_grid_damage_dark(board_position):

@@ -112,7 +112,7 @@ func pixel_to_grid(pixel_x, pixel_y):
 
 func is_in_grid(grid_position):
 	if grid_position.x >= 0 && grid_position.x < width:
-		if grid_position.y >= 0 && grid_position.y < width:
+		if grid_position.y >= 0 && grid_position.y < height:
 			return true;
 	return false;
 
@@ -235,10 +235,11 @@ func refill_columns():
 				var rand = floor(randi_range(0, possible_pieces.size() - 1));
 				var loops = 0;
 				var piece = possible_pieces[rand].instantiate();
-				while(match_at(i,j,piece.color) && loops < 100):
-					rand = floor(randi_range(0, possible_pieces.size() - 1));
-					loops += 1;
-					piece = possible_pieces[rand].instantiate();
+				# Remove # if want to block matches to cascade
+				#while(match_at(i,j,piece.color) && loops < 100):
+				#	rand = floor(randi_range(0, possible_pieces.size() - 1));
+				#	loops += 1;
+				#	piece = possible_pieces[rand].instantiate();
 				add_child(piece);
 				piece.set_position(grid_to_pixel(i, j - y_offset));
 				piece.move(grid_to_pixel(i,j));

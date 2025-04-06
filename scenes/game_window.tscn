@@ -28,7 +28,7 @@ texture = ExtResource("3_7wq2k")
 [node name="grid" type="Node2D" parent="."]
 script = ExtResource("4_xqmpp")
 width = 6
-height = 6
+height = 8
 x_start = 64
 y_start = 864
 offset = 90
