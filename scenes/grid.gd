@@ -16,12 +16,15 @@ var state
 @export var empty_spaces: PackedVector2Array
 @export var dark_spaces: PackedVector2Array
 @export var stone_spaces: PackedVector2Array
+@export var time_spaces: PackedVector2Array
 
 # Obstacle signals
 signal damage_dark
 signal make_dark
 signal damage_stone
 signal make_stone
+signal damage_time
+signal make_time
 
 #Pieces array
 var possible_pieces = [
@@ -53,10 +56,13 @@ func _ready():
 	spawn_pieces();
 	spawn_dark();
 	spawn_stone();
+	spawn_time();
 	
 func restricted_fill(place):
 		#check empty pieces
 	if is_in_array(empty_spaces, place):
+		return true
+	if is_in_array(time_spaces, place):
 		return true
 	return false
 
@@ -71,6 +77,14 @@ func is_in_array(array, item):
 		if array[i] == item:
 			return true
 	return false
+
+func remove_from_array(array, item):
+	for i in range(array.size() - 1, -1, -1):
+		if array[i] == item:
+			array.remove_at(i)
+pass # Replace with function body.
+
+	
 
 func make_2d_array():
 	var array = []
@@ -99,9 +113,14 @@ func spawn_pieces():
 func spawn_dark():
 	for i in dark_spaces.size():
 		emit_signal("make_dark", dark_spaces[i])
+		
 func spawn_stone():
 	for i in stone_spaces.size():
 		emit_signal("make_stone",stone_spaces[i])
+
+func spawn_time():
+	for i in time_spaces.size():
+		emit_signal("make_time",time_spaces[i])
 
 func match_at(i, j, color):
 	if i > 1:
@@ -229,10 +248,23 @@ func destroy_matched():
 		get_parent().get_node("collapse_timer").start()
 	else:
 		swap_back()
+
+func check_time(column, row):
+	# Check Right
+	if column < width - 1:
+		emit_signal("damage_time", Vector2(column + 1, row))
+	# Check Left
+		emit_signal("damage_time", Vector2(column - 1, row))
+	# Check Up
+		emit_signal("damage_time", Vector2(column, row + 1))
+	# Check Down
+		emit_signal("damage_time", Vector2(column, row - 1))
+
 		
 func damage_special(column, row):
 	emit_signal("damage_dark", Vector2(column, row))
 	emit_signal("damage_stone", Vector2(column, row))
+	check_time(column, row)
 
 func collapse_columns():
 	for i in width:
@@ -287,7 +319,8 @@ func _on_refill_timer_timeout():
 	refill_columns()
 
 func _on_stone_holder_remove_stone(place):
-	for i in range(stone_spaces.size() - 1, -1, -1):
-		if stone_spaces[i] == place:
-			stone_spaces.remove_at(i)
+	remove_from_array(stone_spaces, place)
+
+func _on_time_holder_remove_time(place):
+	remove_from_array(time_spaces, place)
 	pass # Replace with function body.

@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmd1umekvbw5b"]
+
+[ext_resource type="PackedScene" uid="uid://cln1ihibgxfmb" path="res://scenes/dark.tscn" id="1_uoj08"]
+[ext_resource type="Texture2D" uid="uid://demhuv8yy0vgh" path="res://Pieces/Time_Basic.png" id="2_4m821"]
+
+[node name="Time" instance=ExtResource("1_uoj08")]
+health = 1
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("2_4m821")
