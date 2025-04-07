@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dlhxjp7t8k0cs"]
+[gd_scene load_steps=9 format=3 uid="uid://dlhxjp7t8k0cs"]
 
 [ext_resource type="Texture2D" uid="uid://dficykcwhhist" path="res://art/background 2.png" id="1_5snyb"]
 [ext_resource type="Texture2D" uid="uid://ccifo13kdg1nj" path="res://art/Top UI v 2.png" id="2_xqmpp"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dvh1ecs1j2tgf" path="res://scripts/dark_holder.gd" id="5_7wq2k"]
 [ext_resource type="Script" uid="uid://7x3l5tpaf5be" path="res://scripts/stone_holder.gd" id="6_5bvbt"]
 [ext_resource type="Script" uid="uid://bpgwmimvxsc8f" path="res://scripts/time_holder.gd" id="7_llew5"]
+[ext_resource type="Script" uid="uid://djnb3crhnuwpn" path="res://scripts/corrupt_holder.gd" id="8_r8j6e"]
 
 [node name="game_window" type="Node2D"]
 
@@ -35,10 +36,11 @@ x_start = 64
 y_start = 864
 offset = 90
 y_offset = 2
-empty_spaces = PackedVector2Array(0, 0, 0, 5, 5, 5, 5, 0, 2, 2, 2, 3, 3, 2, 3, 3)
-dark_spaces = PackedVector2Array(1, 1)
-stone_spaces = PackedVector2Array(2, 1)
-time_spaces = PackedVector2Array(2, 4)
+empty_spaces = PackedVector2Array(0, 0, 0, 7, 5, 7, 5, 0)
+dark_spaces = PackedVector2Array(1, 2)
+stone_spaces = PackedVector2Array(4, 2)
+time_spaces = PackedVector2Array(1, 5)
+corrupt_spaces = PackedVector2Array(4, 5)
 
 [node name="dark_holder" type="Node2D" parent="."]
 script = ExtResource("5_7wq2k")
@@ -48,6 +50,9 @@ script = ExtResource("6_5bvbt")
 
 [node name="time_holder" type="Node2D" parent="."]
 script = ExtResource("7_llew5")
+
+[node name="corrupt_holder" type="Node2D" parent="."]
+script = ExtResource("8_r8j6e")
 
 [node name="destroy_timer" type="Timer" parent="."]
 wait_time = 0.5
@@ -61,14 +66,17 @@ one_shot = true
 wait_time = 0.5
 one_shot = true
 
+[connection signal="damage_corrupt" from="grid" to="corrupt_holder" method="_on_grid_damage_corrupt"]
 [connection signal="damage_dark" from="grid" to="dark_holder" method="_on_grid_damage_dark"]
 [connection signal="damage_stone" from="grid" to="stone_holder" method="_on_grid_damage_stone"]
 [connection signal="damage_time" from="grid" to="time_holder" method="_on_grid_damage_time"]
+[connection signal="make_corrupt" from="grid" to="corrupt_holder" method="_on_grid_make_corrupt"]
 [connection signal="make_dark" from="grid" to="dark_holder" method="_on_grid_make_dark"]
 [connection signal="make_stone" from="grid" to="stone_holder" method="_on_grid_make_stone"]
 [connection signal="make_time" from="grid" to="time_holder" method="_on_grid_make_time"]
 [connection signal="remove_stone" from="stone_holder" to="grid" method="_on_stone_holder_remove_stone"]
 [connection signal="remove_time" from="time_holder" to="grid" method="_on_time_holder_remove_time"]
+[connection signal="remove_corrupt" from="corrupt_holder" to="grid" method="_on_corrupt_holder_remove_corrupt"]
 [connection signal="timeout" from="destroy_timer" to="grid" method="_on_destroy_timer_timeout"]
 [connection signal="timeout" from="collapse_timer" to="grid" method="_on_collapse_timer_timeout"]
 [connection signal="timeout" from="refill_timer" to="grid" method="_on_refill_timer_timeout"]

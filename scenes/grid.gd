@@ -17,7 +17,9 @@ var state
 @export var dark_spaces: PackedVector2Array
 @export var stone_spaces: PackedVector2Array
 @export var time_spaces: PackedVector2Array
+@export var corrupt_spaces: PackedVector2Array
 
+var damaged_corrupt = false
 # Obstacle signals
 signal damage_dark
 signal make_dark
@@ -25,6 +27,8 @@ signal damage_stone
 signal make_stone
 signal damage_time
 signal make_time
+signal damage_corrupt
+signal make_corrupt
 
 #Pieces array
 var possible_pieces = [
@@ -57,12 +61,15 @@ func _ready():
 	spawn_dark();
 	spawn_stone();
 	spawn_time();
+	spawn_corrupt();
 	
 func restricted_fill(place):
 		#check empty pieces
 	if is_in_array(empty_spaces, place):
 		return true
 	if is_in_array(time_spaces, place):
+		return true
+	if is_in_array(corrupt_spaces, place):
 		return true
 	return false
 
@@ -83,8 +90,6 @@ func remove_from_array(array, item):
 		if array[i] == item:
 			array.remove_at(i)
 pass # Replace with function body.
-
-	
 
 func make_2d_array():
 	var array = []
@@ -113,7 +118,7 @@ func spawn_pieces():
 func spawn_dark():
 	for i in dark_spaces.size():
 		emit_signal("make_dark", dark_spaces[i])
-		
+
 func spawn_stone():
 	for i in stone_spaces.size():
 		emit_signal("make_stone",stone_spaces[i])
@@ -121,6 +126,10 @@ func spawn_stone():
 func spawn_time():
 	for i in time_spaces.size():
 		emit_signal("make_time",time_spaces[i])
+
+func spawn_corrupt():
+	for i in corrupt_spaces.size():
+		emit_signal("make_corrupt",corrupt_spaces[i])
 
 func match_at(i, j, color):
 	if i > 1:
@@ -260,11 +269,23 @@ func check_time(column, row):
 	# Check Down
 		emit_signal("damage_time", Vector2(column, row - 1))
 
-		
+func check_corrupt(column, row):
+# Check Right
+	if column < width - 1:
+		emit_signal("damage_corrupt", Vector2(column + 1, row))
+	# Check Left
+		emit_signal("damage_corrupt", Vector2(column - 1, row))
+	# Check Up
+		emit_signal("damage_corrupt", Vector2(column, row + 1))
+	# Check Down
+		emit_signal("damage_corrupt", Vector2(column, row - 1))
+
+
 func damage_special(column, row):
 	emit_signal("damage_dark", Vector2(column, row))
 	emit_signal("damage_stone", Vector2(column, row))
 	check_time(column, row)
+	check_corrupt(column, row)
 
 func collapse_columns():
 	for i in width:
@@ -305,9 +326,55 @@ func after_refill():
 					find_matches()
 					get_parent().get_node("destroy_timer").start()
 					return
+	if !damaged_corrupt:
+		generate_corrupt()
 	state = move;
 	move_checked = false;
-	pass
+	damaged_corrupt = false;
+
+func generate_corrupt():
+	# Make sure there are slime pieces on the board
+	if corrupt_spaces.size() > 0:
+		var corrupt_made = false
+		var tracker = 0
+		while !corrupt_made and tracker < 100:
+			# Check a random slime
+			var random_num = randi_range(0, corrupt_spaces.size() -1)
+			var pos = corrupt_spaces[random_num]  # CORREÇÃO AQUI
+			var curr_x = corrupt_spaces[random_num].x
+			var curr_y = corrupt_spaces[random_num].y
+			var neighbor = find_normal_neighbor(curr_x, curr_y)
+			if neighbor != null:
+				# Turn that neighbor into a corrupt
+				all_pieces [neighbor.x][neighbor.y].queue_free()
+				# remove that piece
+				# set to null
+				all_pieces[neighbor.x][neighbor.y] = null
+				# Add this new stpot to the array of corrupts
+				corrupt_spaces.append(Vector2(neighbor.x, neighbor.y))
+				# Send a signl to the corrupt holder to make a new corrupt
+				emit_signal("make_corrupt", Vector2(neighbor.x, neighbor.y))
+				corrupt_made = true
+			tracker += 1
+
+func find_normal_neighbor(column, row):
+	# Check Right First
+	if is_in_grid(Vector2(column + 1, row)):
+		if all_pieces[column +1][row] != null:
+			return Vector2(column +1, row)
+	# Check Left First
+	if is_in_grid(Vector2(column - 1, row)):
+		if all_pieces[column -1][row] != null:
+			return Vector2(column -1, row)
+	# Check Up First
+	if is_in_grid(Vector2(column, row + 1)):
+		if all_pieces[column][row +1] != null:
+			return Vector2(column, row +1)
+	# Check Right First
+	if is_in_grid(Vector2(column, row -1)):
+		if all_pieces[column][row -1] != null:
+			return Vector2(column, row -1)
+	return null
 
 func _on_destroy_timer_timeout():
 	destroy_matched();
@@ -323,4 +390,7 @@ func _on_stone_holder_remove_stone(place):
 
 func _on_time_holder_remove_time(place):
 	remove_from_array(time_spaces, place)
-	pass # Replace with function body.
+
+func _on_corrupt_holder_remove_corrupt(place):
+	damaged_corrupt = true
+	remove_from_array(corrupt_spaces, place)

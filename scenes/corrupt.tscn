@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://coqiy7p0jv8lf"]
+
+[ext_resource type="PackedScene" uid="uid://cmd1umekvbw5b" path="res://scenes/time.tscn" id="1_ax1rm"]
+[ext_resource type="Texture2D" uid="uid://c0c521b5ghy5p" path="res://Pieces/Corrupt_Basic.png" id="2_0rrks"]
+
+[node name="corrupt" instance=ExtResource("1_ax1rm")]
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("2_0rrks")
