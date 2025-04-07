@@ -1,10 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://do4arwt62ffnl"]
+[gd_scene load_steps=4 format=3 uid="uid://do4arwt62ffnl"]
 
 [ext_resource type="PackedScene" uid="uid://cp4yoirfq1mnr" path="res://scenes/Piece.tscn" id="1_6wdgq"]
+[ext_resource type="Texture2D" uid="uid://c0v844kn8bbwk" path="res://Pieces/TideOfDagon_Special.png" id="2_rnb3b"]
 [ext_resource type="Texture2D" uid="uid://6g72kwt4yqcy" path="res://Pieces/Scale_Basic.png" id="2_xxbjs"]
 
 [node name="blue_piece" instance=ExtResource("1_6wdgq")]
 color = "blue"
+row_texture = ExtResource("2_rnb3b")
+column_texture = ExtResource("2_rnb3b")
+adjacent_texture = ExtResource("2_rnb3b")
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("2_xxbjs")

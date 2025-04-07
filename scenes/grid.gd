@@ -18,8 +18,8 @@ var state
 @export var stone_spaces: PackedVector2Array
 @export var time_spaces: PackedVector2Array
 @export var corrupt_spaces: PackedVector2Array
-
 var damaged_corrupt = false
+
 # Obstacle signals
 signal damage_dark
 signal make_dark
@@ -39,8 +39,9 @@ preload("res://scenes/red_piece.tscn"),
 preload("res://scenes/yellow_piece.tscn")
 ] 
 
-#Pieces in scene
+#The current pieces in scene
 var all_pieces = [];
+var current_matches = [];
 
 # Swap Back Variables
 var piece_one = null;
@@ -62,7 +63,7 @@ func _ready():
 	spawn_stone();
 	spawn_time();
 	spawn_corrupt();
-	
+
 func restricted_fill(place):
 		#check empty pieces
 	if is_in_array(empty_spaces, place):
@@ -89,7 +90,6 @@ func remove_from_array(array, item):
 	for i in range(array.size() - 1, -1, -1):
 		if array[i] == item:
 			array.remove_at(i)
-pass # Replace with function body.
 
 func make_2d_array():
 	var array = []
@@ -213,24 +213,48 @@ func _process(delta):
 	if state == move:
 		touch_input();
 
-func find_matches():
+func find_matches(): # Find pieces that are matched then match and dim
 	for i in width:
 		for j in height:
 			if all_pieces[i][j] != null:
 				var current_color = all_pieces[i][j].color;
-				if i > 0 && i < width - 1:
+				if i > 0 && i < width - 1: # Checking only horizontal matches
 					if !is_piece_null(i - 1, j) && all_pieces[i + 1][j] != null && all_pieces[i + 1][j] != null:
 						if all_pieces[i - 1][j].color == current_color && all_pieces[i + 1][j].color == current_color:
 							match_and_dim(all_pieces[i - 1][j])
 							match_and_dim(all_pieces[i][j])
 							match_and_dim(all_pieces[i + 1][j])
-				if j > 0 && j < height - 1:
+							add_to_array(Vector2(i, j))  # Add them to the array if theyre not already in it
+							add_to_array(Vector2(i + 1, j))
+							add_to_array(Vector2(i - 1, j))
+				if j > 0 && j < height - 1: # Checking only vertical matches
 					if all_pieces[i][j - 1] != null && all_pieces[i][j + 1] != null:
 						if all_pieces[i][j - 1].color == current_color && all_pieces[i][j + 1].color == current_color:
 							match_and_dim(all_pieces[i][j - 1])
 							match_and_dim(all_pieces[i][j])
 							match_and_dim(all_pieces[i][j + 1])
+							add_to_array(Vector2(i, j))  # Add them to the array if theyre not already in it
+							add_to_array(Vector2(i, j + 1))
+							add_to_array(Vector2(i, j - 1))
+	get_bombed_pieces()
 	get_parent().get_node("destroy_timer").start();
+
+func get_bombed_pieces():
+	for i in width:
+		for j in height:
+			if all_pieces[i][j] !=null:
+				if  all_pieces[i][j].matched:
+					if all_pieces[i][j].is_column_bomb:
+						match_all_in_column(i) 
+					elif all_pieces[i][j].is_row_bomb:
+						match_all_in_row(j)
+					elif all_pieces[i][j].is_adjacent_bomb:
+						find_adjacent_pieces(i, j)
+	pass
+
+func add_to_array(value, array_to_add = current_matches): # Add new values to an array if that value isnt already in the array (only for current matches unless told so)
+	if !array_to_add.has(value): 
+		array_to_add.append(value) 
 
 func is_piece_null(column, row):
 	if all_pieces[column][row] == null:
@@ -242,7 +266,62 @@ func match_and_dim(item):
 	item.dim()
 	pass
 
-func destroy_matched():
+func find_bombs(): # Finding bombs on the entire board, iterate over the current_matches array
+	for i in current_matches.size():
+		# Store some values for this match
+		var current_column = current_matches[i].x
+		var current_row = current_matches[i].y
+		var current_color = all_pieces[current_column][current_row].color
+		var col_matched = 0
+		var row_matched = 0
+		# Iterate iver the current matches to check for column, row and color
+		for j in current_matches.size():
+			var this_column = current_matches[j].x
+			var this_row = current_matches[j].y
+			var this_color = all_pieces[current_column][current_row].color
+			if this_column == current_column and current_color == this_color:
+				col_matched += 1
+			if this_row == current_row and this_color == current_color:
+				row_matched += 1
+			# - is == adjacent bomb, 1 == row bomb and 2 == column bomb
+		if col_matched == 5 or row_matched == 5:
+			print ("color bomb")
+			return
+		if col_matched >= 3 and row_matched >= 3:
+			make_bomb(0, current_color)
+			return
+		if col_matched == 4:
+			make_bomb(1, current_color)
+			return
+		if row_matched == 4:
+			make_bomb(2, current_color)
+			return
+
+func make_bomb(bomb_type, color):
+	# Iterate over current_matches
+	for i in current_matches.size():
+		# Cache a few variables
+		var current_column = current_matches[i].x
+		var current_row = current_matches[i].y
+		if all_pieces[current_column][current_row] == piece_one and piece_one.color == color:
+		# Make piece_one a bomb
+			piece_one.matched = false
+			change_bomb(bomb_type, piece_one)
+		if all_pieces[current_column][current_row] == piece_two and piece_two.color == color:
+		# Make piece_two a bomb
+			piece_two.matched = false
+			change_bomb(bomb_type, piece_two)
+
+func change_bomb(bomb_type, piece):
+	if bomb_type == 0:
+		piece.make_adjacent_bomb()
+	elif bomb_type == 1:
+		piece.make_row_bomb()
+	elif bomb_type == 2:
+		piece.make_column_bomb()
+
+func destroy_matched(): # Called everytime we fill the board
+	find_bombs()
 	var was_matched = false;
 	for i in width:
 		for j in height:
@@ -257,6 +336,7 @@ func destroy_matched():
 		get_parent().get_node("collapse_timer").start()
 	else:
 		swap_back()
+	current_matches.clear() 
 
 func check_time(column, row):
 	# Check Right
@@ -279,7 +359,6 @@ func check_corrupt(column, row):
 		emit_signal("damage_corrupt", Vector2(column, row + 1))
 	# Check Down
 		emit_signal("damage_corrupt", Vector2(column, row - 1))
-
 
 func damage_special(column, row):
 	emit_signal("damage_dark", Vector2(column, row))
@@ -375,6 +454,39 @@ func find_normal_neighbor(column, row):
 		if all_pieces[column][row -1] != null:
 			return Vector2(column, row -1)
 	return null
+
+func match_all_in_column(column):
+	for i in height:
+		if all_pieces[column][i] != null:
+			if all_pieces[column][i].is_row_bomb:
+				match_all_in_row(i)
+			if all_pieces[column][i].is_adjacent_bomb:
+				find_adjacent_pieces(column, i)
+			all_pieces[column][i].matched = true
+
+func match_all_in_row(row):
+	for i in width:
+		if all_pieces[i][row] != null:
+			if all_pieces[i][row].is_column_bomb:
+				match_all_in_column(i)
+			if all_pieces[i][row].is_adjacent_bomb:
+				find_adjacent_pieces(i, row)
+			all_pieces[i][row].matched = true
+
+
+
+func find_adjacent_pieces(column, row):
+	for i in range(-1, 2):
+		for j in range(-1, 2):
+			if is_in_grid(Vector2(column + i, row + j)):
+				if all_pieces[column + i][row + j] != null:
+					if all_pieces[column][i].is_row_bomb:
+						match_all_in_row(i)
+					if all_pieces[i][row].is_column_bomb:
+						match_all_in_column(i)
+					all_pieces[column + i][row + j].matched = true;
+
+
 
 func _on_destroy_timer_timeout():
 	destroy_matched();

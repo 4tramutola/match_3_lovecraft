@@ -1,10 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://betuh4blaniny"]
+[gd_scene load_steps=4 format=3 uid="uid://betuh4blaniny"]
 
 [ext_resource type="PackedScene" uid="uid://cp4yoirfq1mnr" path="res://scenes/Piece.tscn" id="1_fylqn"]
+[ext_resource type="Texture2D" uid="uid://cracayqah4iu6" path="res://Pieces/Eye_Basic.png" id="2_46r64"]
 [ext_resource type="Texture2D" uid="uid://bkftwt2k8evor" path="res://Pieces/EldritchWatcher_Special.png" id="2_q70m8"]
 
 [node name="red_piece" instance=ExtResource("1_fylqn")]
 color = "red"
+row_texture = ExtResource("2_46r64")
+column_texture = ExtResource("2_46r64")
+adjacent_texture = ExtResource("2_46r64")
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("2_q70m8")

@@ -1,10 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://dqg3oqs415c2w"]
+[gd_scene load_steps=4 format=3 uid="uid://dqg3oqs415c2w"]
 
 [ext_resource type="PackedScene" uid="uid://cp4yoirfq1mnr" path="res://scenes/Piece.tscn" id="1_mtoub"]
 [ext_resource type="Texture2D" uid="uid://vq3ylytbei85" path="res://Pieces/Ghoul_Special.png" id="2_5h73a"]
+[ext_resource type="Texture2D" uid="uid://do0k4b0l8gyyj" path="res://Pieces/Grave_Basic.png" id="2_ah4by"]
 
 [node name="gray_piece" instance=ExtResource("1_mtoub")]
 color = "gray"
+row_texture = ExtResource("2_ah4by")
+column_texture = ExtResource("2_ah4by")
+adjacent_texture = ExtResource("2_ah4by")
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("2_5h73a")
