@@ -28,11 +28,11 @@ func _on_grid_make_time(board_position):
 	time_pieces[board_position.x][board_position.y] = current
 
 func _on_grid_damage_time(board_position):
-	if board_position.x < width and board_position.y < height:
-		if time_pieces[board_position.x][board_position.y] != null:
-			time_pieces[board_position.x][board_position.y].take_damage(1)
-			if time_pieces[board_position.x][board_position.y].health <= 0:
-				time_pieces[board_position.x][board_position.y].queue_free()  # Correct usage
-				time_pieces[board_position.x][board_position.y] = null  # Clear the reference
-				emit_signal("remove_time", board_position)
-		pass # Replace with function body.
+	if time_pieces.size() != 0:
+		if board_position.x < width and board_position.y < height:
+			if time_pieces[board_position.x][board_position.y] != null:
+				time_pieces[board_position.x][board_position.y].take_damage(1)
+				if time_pieces[board_position.x][board_position.y].health <= 0:
+					time_pieces[board_position.x][board_position.y].queue_free()  # Correct usage
+					time_pieces[board_position.x][board_position.y] = null  # Clear the reference
+					emit_signal("remove_time", board_position)

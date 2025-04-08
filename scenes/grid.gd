@@ -36,7 +36,7 @@ preload("res://scenes/blue_piece.tscn"),
 preload("res://scenes/gray_piece.tscn"),
 preload("res://scenes/purple_piece.tscn"),
 preload("res://scenes/red_piece.tscn"),
-preload("res://scenes/yellow_piece.tscn")
+#preload("res://scenes/yellow_piece.tscn")
 ] 
 
 #The current pieces in scene
@@ -287,13 +287,13 @@ func find_bombs(): # Finding bombs on the entire board, iterate over the current
 		if col_matched == 5 or row_matched == 5:
 			print ("color bomb")
 			return
-		if col_matched >= 3 and row_matched >= 3:
+		elif col_matched >= 3 and row_matched >= 3:
 			make_bomb(0, current_color)
 			return
-		if col_matched == 4:
+		elif col_matched == 4:
 			make_bomb(1, current_color)
 			return
-		if row_matched == 4:
+		elif row_matched == 4:
 			make_bomb(2, current_color)
 			return
 

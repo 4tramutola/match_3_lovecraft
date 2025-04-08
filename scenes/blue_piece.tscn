@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://6g72kwt4yqcy" path="res://Pieces/Scale_Basic.png" id="2_xxbjs"]
 
 [node name="blue_piece" instance=ExtResource("1_6wdgq")]
+position = Vector2(1, 0)
 color = "blue"
 row_texture = ExtResource("2_rnb3b")
 column_texture = ExtResource("2_rnb3b")

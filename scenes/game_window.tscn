@@ -1,8 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://dlhxjp7t8k0cs"]
+[gd_scene load_steps=7 format=3 uid="uid://dlhxjp7t8k0cs"]
 
-[ext_resource type="Texture2D" uid="uid://dficykcwhhist" path="res://art/background 2.png" id="1_5snyb"]
-[ext_resource type="Texture2D" uid="uid://ccifo13kdg1nj" path="res://art/Top UI v 2.png" id="2_xqmpp"]
-[ext_resource type="Texture2D" uid="uid://5r4tig42n01" path="res://art/Bottom UI v 2.png" id="3_7wq2k"]
+[ext_resource type="Texture2D" uid="uid://e5d4v5kp03wk" path="res://art/2a05f7c0ab7ff913d368eeb2baf59918.jpeg" id="1_5bvbt"]
 [ext_resource type="Script" uid="uid://b4ua1gowkofww" path="res://scenes/grid.gd" id="4_xqmpp"]
 [ext_resource type="Script" uid="uid://dvh1ecs1j2tgf" path="res://scripts/dark_holder.gd" id="5_7wq2k"]
 [ext_resource type="Script" uid="uid://7x3l5tpaf5be" path="res://scripts/stone_holder.gd" id="6_5bvbt"]
@@ -13,20 +11,20 @@
 
 [node name="background" type="TextureRect" parent="."]
 offset_left = -1.0
-offset_right = 39.0
-offset_bottom = 40.0
-texture = ExtResource("1_5snyb")
+offset_right = 639.0
+offset_bottom = 1136.0
+texture = ExtResource("1_5bvbt")
+expand_mode = 4
+stretch_mode = 3
 
 [node name="top_ui" type="TextureRect" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
-texture = ExtResource("2_xqmpp")
 
 [node name="bottom_ui" type="TextureRect" parent="."]
 offset_top = 928.0
 offset_right = 576.0
 offset_bottom = 1020.0
-texture = ExtResource("3_7wq2k")
 
 [node name="grid" type="Node2D" parent="."]
 script = ExtResource("4_xqmpp")
@@ -36,11 +34,6 @@ x_start = 64
 y_start = 864
 offset = 90
 y_offset = 2
-empty_spaces = PackedVector2Array(0, 0, 0, 7, 5, 7, 5, 0)
-dark_spaces = PackedVector2Array(1, 2)
-stone_spaces = PackedVector2Array(4, 2)
-time_spaces = PackedVector2Array(1, 5)
-corrupt_spaces = PackedVector2Array(4, 5)
 
 [node name="dark_holder" type="Node2D" parent="."]
 script = ExtResource("5_7wq2k")

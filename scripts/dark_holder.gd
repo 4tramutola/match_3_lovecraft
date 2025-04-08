@@ -26,9 +26,9 @@ func _on_grid_make_dark(board_position):
 	dark_pieces[board_position.x][board_position.y] = current
 
 func _on_grid_damage_dark(board_position):
-	if dark_pieces[board_position.x][board_position.y]	 != null:
-		dark_pieces[board_position.x][board_position.y].take_damage(1)
-		if dark_pieces[board_position.x][board_position.y].health <= 0:
-			dark_pieces[board_position.x][board_position.y].queue_free()  # Correct usage
-			dark_pieces[board_position.x][board_position.y] = null  # Clear the reference
-	pass # Replace with function body.
+	if dark_pieces.size() != 0:
+		if dark_pieces[board_position.x][board_position.y]	 != null:
+			dark_pieces[board_position.x][board_position.y].take_damage(1)
+			if dark_pieces[board_position.x][board_position.y].health <= 0:
+				dark_pieces[board_position.x][board_position.y].queue_free()  # Correct usage
+				dark_pieces[board_position.x][board_position.y] = null  # Clear the reference

@@ -28,10 +28,10 @@ func _on_grid_make_stone(board_position):
 	stone_pieces[board_position.x][board_position.y] = current
 
 func _on_grid_damage_stone(board_position):
-	if stone_pieces[board_position.x][board_position.y]	 != null:
-		stone_pieces[board_position.x][board_position.y].take_damage(1)
-		if stone_pieces[board_position.x][board_position.y].health <= 0:
-			stone_pieces[board_position.x][board_position.y].queue_free()  # Correct usage
-			stone_pieces[board_position.x][board_position.y] = null  # Clear the reference
-			emit_signal("remove_stone", board_position)
-	pass # Replace with function body.
+	if stone_pieces.size() != 0:
+		if stone_pieces[board_position.x][board_position.y]	 != null:
+			stone_pieces[board_position.x][board_position.y].take_damage(1)
+			if stone_pieces[board_position.x][board_position.y].health <= 0:
+				stone_pieces[board_position.x][board_position.y].queue_free()  # Correct usage
+				stone_pieces[board_position.x][board_position.y] = null  # Clear the reference
+				emit_signal("remove_stone", board_position)
